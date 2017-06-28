@@ -10,11 +10,11 @@ using namespace Windows::UI::Xaml::Controls;
 namespace LibretroRT_FrontendComponents_AngleRenderer
 {
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class AngleSwapChainManager sealed
+	public ref class AngleRenderer sealed
 	{
 	public:
-		AngleSwapChainManager(SwapChainPanel^ swapChainPanel);
-		virtual ~AngleSwapChainManager();
+		AngleRenderer(SwapChainPanel^ swapChainPanel);
+		virtual ~AngleRenderer();
 		void StartRenderer(IRenderer^ renderer);
 		void StopRenderer();
 

@@ -206,13 +206,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AngleSwapChainManager.h" />
+    <ClInclude Include="AngleRenderer.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AngleSwapChainManager.cpp" />
+    <ClCompile Include="AngleRenderer.cpp" />
     <ClCompile Include="OpenGLES.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

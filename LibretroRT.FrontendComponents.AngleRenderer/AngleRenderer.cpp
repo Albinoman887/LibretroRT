@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AngleSwapChainManager.h"
+#include "AngleRenderer.h"
 
 using namespace Platform;
 using namespace Concurrency;
@@ -9,7 +9,7 @@ using namespace Windows::UI::Xaml;
 
 using namespace LibretroRT_FrontendComponents_AngleRenderer;
 
-AngleSwapChainManager::AngleSwapChainManager(SwapChainPanel^ swapChainPanel) :
+AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel) :
 	mOpenGLES(*OpenGLES::GetInstance()),
 	mSwapChainPanel(swapChainPanel),
 	mRenderSurface(EGL_NO_SURFACE),
@@ -17,24 +17,24 @@ AngleSwapChainManager::AngleSwapChainManager(SwapChainPanel^ swapChainPanel) :
 {
 	CoreWindow^ window = Window::Current->CoreWindow;
 
-	window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleSwapChainManager::OnVisibilityChanged);
+	window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
 
-	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleSwapChainManager::OnPageLoaded);
+	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleRenderer::OnPageLoaded);
 }
 
-AngleSwapChainManager::~AngleSwapChainManager()
+AngleRenderer::~AngleRenderer()
 {
 	StopRenderer();
 	DestroyRenderSurface();
 }
 
-void AngleSwapChainManager::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
+void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
 	// The SwapChainPanel has been created and arranged in the page layout, so EGL can be initialized.
 	CreateRenderSurface();
 }
 
-void AngleSwapChainManager::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
+void AngleRenderer::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
 {
 	if (args->Visible && mRenderSurface != EGL_NO_SURFACE)
 	{
@@ -46,7 +46,7 @@ void AngleSwapChainManager::OnVisibilityChanged(CoreWindow^ sender, VisibilityCh
 	}
 }
 
-void AngleSwapChainManager::CreateRenderSurface()
+void AngleRenderer::CreateRenderSurface()
 {
 	if (mRenderSurface == EGL_NO_SURFACE)
 	{
@@ -69,13 +69,13 @@ void AngleSwapChainManager::CreateRenderSurface()
 	}
 }
 
-void AngleSwapChainManager::DestroyRenderSurface()
+void AngleRenderer::DestroyRenderSurface()
 {
 	mOpenGLES.DestroySurface(mRenderSurface);
 	mRenderSurface = EGL_NO_SURFACE;
 }
 
-void AngleSwapChainManager::RecoverFromLostDevice()
+void AngleRenderer::RecoverFromLostDevice()
 {
 	// Stop the render loop, reset OpenGLES, recreate the render surface
 	// and start the render loop again to recover from a lost device.
@@ -93,7 +93,7 @@ void AngleSwapChainManager::RecoverFromLostDevice()
 	StartRenderer();
 }
 
-void AngleSwapChainManager::StartRenderer(IRenderer^ renderer)
+void AngleRenderer::StartRenderer(IRenderer^ renderer)
 {
 	StopRenderer();
 	
@@ -106,7 +106,7 @@ void AngleSwapChainManager::StartRenderer(IRenderer^ renderer)
 	StartRenderer();
 }
 
-void AngleSwapChainManager::StartRenderer()
+void AngleRenderer::StartRenderer()
 {
 	// If the render loop is already running then do not start another thread.
 	if (mRenderLoopWorker != nullptr && mRenderLoopWorker->Status == AsyncStatus::Started)
@@ -154,7 +154,7 @@ void AngleSwapChainManager::StartRenderer()
 	mRenderLoopWorker = Windows::System::Threading::ThreadPool::RunAsync(workItemHandler, Windows::System::Threading::WorkItemPriority::High, Windows::System::Threading::WorkItemOptions::TimeSliced);
 }
 
-void AngleSwapChainManager::StopRenderer()
+void AngleRenderer::StopRenderer()
 {
 	if (mRenderLoopWorker)
 	{
