@@ -35,6 +35,37 @@ AngleRenderer::~AngleRenderer()
 	DestroyRenderSurface();
 }
 
+IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGameFilePath)
+{
+	return create_async([=]
+	{
+		/*while (!RenderPanelInitialized)
+		{
+		//Ensure core doesn't try rendering before Win2D is ready.
+		//Some games load faster than the Win2D canvas is initialized
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		}*/
+
+		auto output = create_task(UnloadGameAsync()).then([=]
+		{
+			critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+			mCoordinator->Core = core;
+			if (!core->LoadGame(mainGameFilePath))
+			{
+				return false;
+			}
+
+			GameID = mainGameFilePath;
+			//RenderTargetManager.CurrentCorePixelFormat = core.PixelFormat;
+			CoreIsExecuting = true;
+			return true;
+		});
+
+		return output;
+	});
+}
+
 IAsyncAction^ AngleRenderer::UnloadGameAsync()
 {
 	return create_async([=]
