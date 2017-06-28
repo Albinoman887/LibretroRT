@@ -9,23 +9,110 @@ using namespace Windows::UI::Xaml;
 
 using namespace LibretroRT_FrontendComponents_AngleRenderer;
 
-AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel) :
+AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audioPlayer, IInputManager^ inputManager) :
+	mGameId(nullptr),
+	mCoreIsExecuting(false),
+	mCoordinator(ref new CoreCoordinator),
 	mOpenGLES(*OpenGLES::GetInstance()),
 	mSwapChainPanel(swapChainPanel),
-	mRenderSurface(EGL_NO_SURFACE),
-	mRenderer(nullptr)
+	mRenderSurface(EGL_NO_SURFACE)
 {
+	mCoordinator->Renderer = this;
+	mCoordinator->AudioPlayer = audioPlayer;
+	mCoordinator->InputManager = inputManager;
+
 	CoreWindow^ window = Window::Current->CoreWindow;
-
-	window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
-
+	auto token = window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
 	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleRenderer::OnPageLoaded);
 }
 
 AngleRenderer::~AngleRenderer()
 {
-	StopRenderer();
+	critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+	auto core = mCoordinator->Core;
+	if (core) { core->UnloadGame(); }
+
 	DestroyRenderSurface();
+}
+
+IAsyncAction^ AngleRenderer::UnloadGameAsync()
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		GameID = nullptr;
+		CoreIsExecuting = false;
+
+		auto core = mCoordinator->Core;
+		if (core) { core->UnloadGame(); }
+
+		auto audioPlayer = mCoordinator->AudioPlayer;
+		if (audioPlayer) { audioPlayer->Stop(); }
+	});
+}
+
+IAsyncAction^ AngleRenderer::ResetGameAsync()
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		auto audioPlayer = mCoordinator->AudioPlayer;
+		if (audioPlayer) { audioPlayer->Stop(); }
+
+		auto core = mCoordinator->Core;
+		if (core) { core->Reset(); }
+	});
+}
+
+IAsyncAction^ AngleRenderer::PauseCoreExecutionAsync()
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		auto audioPlayer = mCoordinator->AudioPlayer;
+		if (audioPlayer) { audioPlayer->Stop(); }
+
+		CoreIsExecuting = false;
+	});
+}
+
+IAsyncAction^ AngleRenderer::ResumeCoreExecutionAsync()
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		CoreIsExecuting = true;
+	});
+}
+
+IAsyncOperation<bool>^ AngleRenderer::SaveGameStateAsync(WriteOnlyArray<byte>^ stateData)
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		auto core = mCoordinator->Core;
+		if (!core) { return false; }
+
+		return core->Serialize(stateData);
+	});
+}
+
+IAsyncOperation<bool>^ AngleRenderer::LoadGameStateAsync(const Array<byte>^ stateData)
+{
+	return create_async([=]
+	{
+		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+		auto core = mCoordinator->Core;
+		if (!core) { return false; }
+
+		return core->Unserialize(stateData);
+	});
 }
 
 void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)

@@ -207,7 +207,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AngleRenderer.h" />
-    <ClInclude Include="IRenderer.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

@@ -13,7 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="IRenderer.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="AngleRenderer.h" />
   </ItemGroup>
