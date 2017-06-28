@@ -4,6 +4,8 @@
 using namespace Platform;
 using namespace Concurrency;
 using namespace Windows::Foundation;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml;
 
 using namespace LibretroRT_FrontendComponents_AngleRenderer;
 
@@ -13,11 +15,11 @@ AngleSwapChainManager::AngleSwapChainManager(SwapChainPanel^ swapChainPanel) :
 	mRenderSurface(EGL_NO_SURFACE),
 	mRenderer(nullptr)
 {
-	Windows::UI::Core::CoreWindow^ window = Windows::UI::Xaml::Window::Current->CoreWindow;
+	CoreWindow^ window = Window::Current->CoreWindow;
 
-	window->VisibilityChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow^, Windows::UI::Core::VisibilityChangedEventArgs^>(this, &AngleSwapChainManager::OnVisibilityChanged);
+	window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleSwapChainManager::OnVisibilityChanged);
 
-	mSwapChainPanel->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &AngleSwapChainManager::OnPageLoaded);
+	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleSwapChainManager::OnPageLoaded);
 }
 
 AngleSwapChainManager::~AngleSwapChainManager()
@@ -26,13 +28,13 @@ AngleSwapChainManager::~AngleSwapChainManager()
 	DestroyRenderSurface();
 }
 
-void AngleSwapChainManager::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void AngleSwapChainManager::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
 	// The SwapChainPanel has been created and arranged in the page layout, so EGL can be initialized.
 	CreateRenderSurface();
 }
 
-void AngleSwapChainManager::OnVisibilityChanged(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::VisibilityChangedEventArgs^ args)
+void AngleSwapChainManager::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
 {
 	if (args->Visible && mRenderSurface != EGL_NO_SURFACE)
 	{
@@ -107,13 +109,13 @@ void AngleSwapChainManager::StartRenderer(IRenderer^ renderer)
 void AngleSwapChainManager::StartRenderer()
 {
 	// If the render loop is already running then do not start another thread.
-	if (mRenderLoopWorker != nullptr && mRenderLoopWorker->Status == Windows::Foundation::AsyncStatus::Started)
+	if (mRenderLoopWorker != nullptr && mRenderLoopWorker->Status == AsyncStatus::Started)
 	{
 		return;
 	}
 
 	// Create a task for rendering that will be run on a background thread.
-	auto workItemHandler = ref new Windows::System::Threading::WorkItemHandler([this](Windows::Foundation::IAsyncAction ^ action)
+	auto workItemHandler = ref new Windows::System::Threading::WorkItemHandler([this](IAsyncAction ^ action)
 	{
 		critical_section::scoped_lock lock(mRenderSurfaceCriticalSection);
 
@@ -121,7 +123,7 @@ void AngleSwapChainManager::StartRenderer()
 
 		mRenderer->Init();
 
-		while (action->Status == Windows::Foundation::AsyncStatus::Started)
+		while (action->Status == AsyncStatus::Started)
 		{
 			EGLint panelWidth = 0;
 			EGLint panelHeight = 0;
@@ -136,7 +138,7 @@ void AngleSwapChainManager::StartRenderer()
 			if (mOpenGLES.SwapBuffers(mRenderSurface) != GL_TRUE)
 			{
 				// XAML objects like the SwapChainPanel must only be manipulated on the UI thread.
-				mSwapChainPanel->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([=]()
+				mSwapChainPanel->Dispatcher->RunAsync(CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
 				{
 					RecoverFromLostDevice();
 				}, CallbackContext::Any));

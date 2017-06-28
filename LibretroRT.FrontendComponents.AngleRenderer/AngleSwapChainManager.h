@@ -3,6 +3,8 @@
 #include "OpenGLES.h"
 #include "IRenderer.h"
 
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 
 namespace LibretroRT_FrontendComponents_AngleRenderer
@@ -17,8 +19,8 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void StopRenderer();
 
 	private:
-		void OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void OnVisibilityChanged(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::VisibilityChangedEventArgs^ args);
+		void OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
+		void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args);
 		void CreateRenderSurface();
 		void DestroyRenderSurface();
 		void RecoverFromLostDevice();

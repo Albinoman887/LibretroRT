@@ -1,5 +1,8 @@
 #pragma once
 
+using namespace Windows::Foundation;
+using namespace Windows::UI::Xaml::Controls;
+
 namespace LibretroRT_FrontendComponents_AngleRenderer
 {
 	class OpenGLES
@@ -8,7 +11,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		~OpenGLES();
 
 		static std::shared_ptr<OpenGLES>& GetInstance();
-		EGLSurface CreateSurface(Windows::UI::Xaml::Controls::SwapChainPanel^ panel, const Windows::Foundation::Size* renderSurfaceSize, const float* renderResolutionScale);
+		EGLSurface CreateSurface(SwapChainPanel^ panel, const Size* renderSurfaceSize, const float* renderResolutionScale);
 		void GetSurfaceDimensions(const EGLSurface surface, EGLint *width, EGLint *height);
 		void DestroySurface(const EGLSurface surface);
 		void MakeCurrent(const EGLSurface surface);
