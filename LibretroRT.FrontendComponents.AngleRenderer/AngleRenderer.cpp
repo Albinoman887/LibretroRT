@@ -11,7 +11,6 @@ using namespace LibretroRT_FrontendComponents_AngleRenderer;
 
 AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audioPlayer, IInputManager^ inputManager) :
 	mGameId(nullptr),
-	mCoreIsExecuting(false),
 	mCoordinator(ref new CoreCoordinator),
 	mOpenGLES(*OpenGLES::GetInstance()),
 	mSwapChainPanel(swapChainPanel),
@@ -21,14 +20,15 @@ AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audio
 	mCoordinator->AudioPlayer = audioPlayer;
 	mCoordinator->InputManager = inputManager;
 
-	CoreWindow^ window = Window::Current->CoreWindow;
-	auto token = window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
+	//CoreWindow^ window = Window::Current->CoreWindow;
+	//auto token = window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
 	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleRenderer::OnPageLoaded);
 }
 
 AngleRenderer::~AngleRenderer()
 {
-	critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+	StopRendering();
+
 	auto core = mCoordinator->Core;
 	if (core) { core->UnloadGame(); }
 
@@ -58,7 +58,7 @@ IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGam
 
 			GameID = mainGameFilePath;
 			//RenderTargetManager.CurrentCorePixelFormat = core.PixelFormat;
-			CoreIsExecuting = true;
+			StartRendering();
 			return true;
 		});
 
@@ -71,9 +71,7 @@ IAsyncAction^ AngleRenderer::UnloadGameAsync()
 	return create_async([=]
 	{
 		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
-
 		GameID = nullptr;
-		CoreIsExecuting = false;
 
 		auto core = mCoordinator->Core;
 		if (core) { core->UnloadGame(); }
@@ -101,12 +99,10 @@ IAsyncAction^ AngleRenderer::PauseCoreExecutionAsync()
 {
 	return create_async([=]
 	{
-		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+		StopRendering();
 
 		auto audioPlayer = mCoordinator->AudioPlayer;
 		if (audioPlayer) { audioPlayer->Stop(); }
-
-		CoreIsExecuting = false;
 	});
 }
 
@@ -114,9 +110,7 @@ IAsyncAction^ AngleRenderer::ResumeCoreExecutionAsync()
 {
 	return create_async([=]
 	{
-		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
-
-		CoreIsExecuting = true;
+		StartRendering();
 	});
 }
 
@@ -152,17 +146,17 @@ void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 	CreateRenderSurface();
 }
 
-void AngleRenderer::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
+/*void AngleRenderer::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
 {
 	if (args->Visible && mRenderSurface != EGL_NO_SURFACE)
 	{
-		StartRenderer();
+		StartRendering();
 	}
 	else
 	{
-		StopRenderer();
+		StopRendering();
 	}
-}
+}*/
 
 void AngleRenderer::CreateRenderSurface()
 {
@@ -198,33 +192,16 @@ void AngleRenderer::RecoverFromLostDevice()
 	// Stop the render loop, reset OpenGLES, recreate the render surface
 	// and start the render loop again to recover from a lost device.
 
-	StopRenderer();
+	StopRendering();
 
-	{
-		critical_section::scoped_lock lock(mRenderSurfaceCriticalSection);
+	DestroyRenderSurface();
+	mOpenGLES.Reset();
+	CreateRenderSurface();
 
-		DestroyRenderSurface();
-		mOpenGLES.Reset();
-		CreateRenderSurface();
-	}
-
-	StartRenderer();
+	StartRendering();
 }
 
-void AngleRenderer::StartRenderer(IRenderer^ renderer)
-{
-	StopRenderer();
-	
-	{
-		critical_section::scoped_lock lock(mRenderSurfaceCriticalSection);
-
-		mRenderer = renderer;
-	}
-
-	StartRenderer();
-}
-
-void AngleRenderer::StartRenderer()
+void AngleRenderer::StartRendering()
 {
 	// If the render loop is already running then do not start another thread.
 	if (mRenderLoopWorker != nullptr && mRenderLoopWorker->Status == AsyncStatus::Started)
@@ -239,18 +216,15 @@ void AngleRenderer::StartRenderer()
 
 		mOpenGLES.MakeCurrent(mRenderSurface);
 
-		mRenderer->Init();
-
 		while (action->Status == AsyncStatus::Started)
 		{
 			EGLint panelWidth = 0;
 			EGLint panelHeight = 0;
 			mOpenGLES.GetSurfaceDimensions(mRenderSurface, &panelWidth, &panelHeight);
 
-			// Logic to update the scene could go here
-			mRenderer->UpdateWindowSize(panelWidth, panelHeight);
-			mRenderer->Draw();
+			RunFrameCoreLogic();
 
+			
 			// The call to eglSwapBuffers might not be successful (i.e. due to Device Lost)
 			// If the call fails, then we must reinitialize EGL and the GL resources.
 			if (mOpenGLES.SwapBuffers(mRenderSurface) != GL_TRUE)
@@ -264,19 +238,27 @@ void AngleRenderer::StartRenderer()
 				return;
 			}
 		}
-
-		mRenderer->Deinit();
 	});
 
 	// Run task on a dedicated high priority background thread.
 	mRenderLoopWorker = Windows::System::Threading::ThreadPool::RunAsync(workItemHandler, Windows::System::Threading::WorkItemPriority::High, Windows::System::Threading::WorkItemOptions::TimeSliced);
 }
 
-void AngleRenderer::StopRenderer()
+void AngleRenderer::StopRendering()
 {
 	if (mRenderLoopWorker)
 	{
 		mRenderLoopWorker->Cancel();
 		mRenderLoopWorker = nullptr;
+
+		critical_section::scoped_lock lock(mRenderSurfaceCriticalSection);
 	}
+}
+
+void AngleRenderer::RunFrameCoreLogic()
+{
+	critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+
+	auto core = mCoordinator->Core;
+	core->RunFrame();
 }

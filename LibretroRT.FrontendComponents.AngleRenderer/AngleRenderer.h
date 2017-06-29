@@ -27,9 +27,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 		virtual property bool CoreIsExecuting
 		{
-			bool get() { return mCoreIsExecuting; }
-		private:
-			void set(bool value) { mCoreIsExecuting = value; }
+			bool get() { return mRenderLoopWorker != nullptr; }
 		}
 
 		virtual property UINT SerializationSize
@@ -63,7 +61,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 	private:
 		String^ mGameId;
-		bool mCoreIsExecuting;
 
 		CoreCoordinator^ const mCoordinator;
 		critical_section mCoordinatorCriticalSection;
@@ -72,12 +69,16 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		SwapChainPanel^ mSwapChainPanel;
 		EGLSurface mRenderSurface;
 		IAsyncAction^ mRenderLoopWorker;
+		critical_section mRenderSurfaceCriticalSection;
 
-		void OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
-		void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args);
 		void CreateRenderSurface();
 		void DestroyRenderSurface();
 		void RecoverFromLostDevice();
+		void StartRendering();
+		void StopRendering();
+		void RunFrameCoreLogic();
+		void OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
+		//void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args);
 	};
 }
 
