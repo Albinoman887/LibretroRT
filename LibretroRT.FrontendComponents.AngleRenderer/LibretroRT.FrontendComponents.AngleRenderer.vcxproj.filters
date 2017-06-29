@@ -10,11 +10,13 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="OpenGLES.cpp" />
     <ClCompile Include="AngleRenderer.cpp" />
+    <ClCompile Include="CoreRenderTargetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="AngleRenderer.h" />
+    <ClInclude Include="CoreRenderTargetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

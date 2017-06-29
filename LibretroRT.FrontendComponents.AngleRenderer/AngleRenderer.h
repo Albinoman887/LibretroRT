@@ -30,9 +30,9 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 			bool get() { return mRenderLoopWorker != nullptr; }
 		}
 
-		virtual property UINT SerializationSize
+		virtual property unsigned int SerializationSize
 		{
-			UINT get()
+			unsigned int get()
 			{
 				critical_section::scoped_lock lock(mCoordinatorCriticalSection);
 				auto core = mCoordinator->Core;
