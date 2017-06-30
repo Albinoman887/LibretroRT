@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenGLES.h"
+#include "CoreRenderTargetManager.h"
 #include <concrt.h>
 
 using namespace LibretroRT;
@@ -50,11 +51,11 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		virtual IAsyncOperation<bool>^ SaveGameStateAsync(WriteOnlyArray<byte>^ stateData) override;
 		virtual IAsyncOperation<bool>^ LoadGameStateAsync(const Array<byte>^ stateData) override;
 
-		virtual event CoreRunExceptionOccurredDelegate^ CoreRunExceptionOccurred;
-
 		virtual void GeometryChanged(GameGeometry^ geometry) override;
 		virtual void PixelFormatChanged(PixelFormats format) override;
 		virtual void RenderVideoFrame(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch) override;
+
+		virtual event CoreRunExceptionOccurredDelegate^ CoreRunExceptionOccurred;
 
 		AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audioPlayer, IInputManager^ inputManager);
 		virtual ~AngleRenderer();
@@ -70,6 +71,8 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		EGLSurface mRenderSurface;
 		IAsyncAction^ mRenderLoopWorker;
 		critical_section mRenderSurfaceCriticalSection;
+
+		CoreRenderTargetManager mRenderTargetManager;
 
 		void CreateRenderSurface();
 		void DestroyRenderSurface();

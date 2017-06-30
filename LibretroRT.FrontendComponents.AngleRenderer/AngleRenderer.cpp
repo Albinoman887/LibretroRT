@@ -127,6 +127,27 @@ IAsyncOperation<bool>^ AngleRenderer::SaveGameStateAsync(WriteOnlyArray<byte>^ s
 	});
 }
 
+void AngleRenderer::GeometryChanged(GameGeometry^ geometry)
+{
+	auto core = mCoordinator->Core;
+	if (!core) { return; }
+
+	mRenderTargetManager.SetFormat(geometry, core->PixelFormat);
+}
+
+void AngleRenderer::PixelFormatChanged(PixelFormats format)
+{
+	auto core = mCoordinator->Core;
+	if (!core) { return; }
+
+	mRenderTargetManager.SetFormat(core->Geometry, format);
+}
+
+void AngleRenderer::RenderVideoFrame(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
+{
+	mRenderTargetManager.UpdateFromCoreOutput(frameBuffer, width, height, pitch);
+}
+
 IAsyncOperation<bool>^ AngleRenderer::LoadGameStateAsync(const Array<byte>^ stateData)
 {
 	return create_async([=]
@@ -223,7 +244,7 @@ void AngleRenderer::StartRendering()
 			mOpenGLES.GetSurfaceDimensions(mRenderSurface, &panelWidth, &panelHeight);
 
 			RunFrameCoreLogic();
-
+			mRenderTargetManager.Render(panelWidth, panelHeight);
 			
 			// The call to eglSwapBuffers might not be successful (i.e. due to Device Lost)
 			// If the call fails, then we must reinitialize EGL and the GL resources.
@@ -260,5 +281,14 @@ void AngleRenderer::RunFrameCoreLogic()
 	critical_section::scoped_lock lock(mCoordinatorCriticalSection);
 
 	auto core = mCoordinator->Core;
-	core->RunFrame();
+	try
+	{
+		core->RunFrame();
+	}
+	catch(Platform::FailureException^ e)
+	{
+		HResult res;
+		res.Value = e->HResult;
+		CoreRunExceptionOccurred(core, res);
+	}
 }
