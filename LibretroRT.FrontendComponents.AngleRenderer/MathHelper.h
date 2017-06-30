@@ -19,5 +19,21 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 			float m[4][4];
 		};
+
+		inline static Matrix4 ScaleMatrix(float x, float y, float z)
+		{
+			return Matrix4(x, 0.0f, 0.0f, 0.0f,
+				0.0f, y, 0.0f, 0.0f,
+				0.0f, 0.0f, z, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f);
+		}
+
+		inline static Matrix4 TranslateMatrix(float x, float y, float z)
+		{
+			return Matrix4(0.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 0.0f,
+				x, y, z, 1.0f);
+		}
 	}
 }
