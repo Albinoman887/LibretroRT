@@ -22,7 +22,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		unsigned int mTextureSize;
 		float mAspectRatio;
 		PixelFormats mPixelFormat;
-		unsigned int mPixelFormatBPP;
 
 		GLuint mTextureID;
 		GLuint mVertexPositionBufferID;
@@ -39,7 +38,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 		void DeleteTexture();
 		static GLint ConvertPixelFormat(PixelFormats libretroFormat);
-		unsigned int ConvertPixelFormatToBPP(PixelFormats libretroFormat);
 		static unsigned int GetClosestPowerOfTwo(unsigned int value);
 	};
 }

@@ -13,7 +13,6 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 	mTextureSize(MinTextureSize),
 	mAspectRatio(0.0f),
 	mPixelFormat(PixelFormats::FormatUknown),
-	mPixelFormatBPP(0),
 	mTextureID(GL_NONE),
 	mVertexPositionBufferID(GL_NONE),
 	mVertexTexturePositionBufferID(GL_NONE),
@@ -137,14 +136,15 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
 {
 	critical_section::scoped_lock lock(mCriticalSection);
-	if (mTextureID == GL_INVALID_VALUE || frameBuffer == nullptr || mPixelFormatBPP == 0)
+	if (mTextureID == GL_INVALID_VALUE || frameBuffer == nullptr)
 	{
 		return;
 	}
 
-	width = pitch / mPixelFormatBPP;
+	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, frameBuffer->Data);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
 }
 
 void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
@@ -207,21 +207,6 @@ GLint CoreRenderTargetManager::ConvertPixelFormat(PixelFormats libretroFormat)
 	}
 
 	return GL_INVALID_VALUE;
-}
-
-unsigned int CoreRenderTargetManager::ConvertPixelFormatToBPP(PixelFormats libretroFormat)
-{
-	switch (libretroFormat)
-	{
-	case LibretroRT::PixelFormats::Format0RGB1555:
-		return 2;
-	case LibretroRT::PixelFormats::FormatXRGB8888:
-		return 4;
-	case LibretroRT::PixelFormats::FormatRGB565:
-		return 2;
-	}
-
-	return 0;
 }
 
 unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
