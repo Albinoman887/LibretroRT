@@ -16,7 +16,6 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 {
 }
 
-
 CoreRenderTargetManager::~CoreRenderTargetManager()
 {
 	critical_section::scoped_lock lock(mCriticalSection);
@@ -49,7 +48,7 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
 {
 	critical_section::scoped_lock lock(mCriticalSection);
-	if (mTextureID == GL_INVALID_VALUE)
+	if (mTextureID == GL_INVALID_VALUE || frameBuffer == nullptr || mPixelFormatBPP == 0)
 	{
 		return;
 	}
@@ -62,7 +61,7 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 {
 	critical_section::scoped_lock lock(mCriticalSection);
-	if (mTextureID == GL_INVALID_VALUE)
+	if (mTextureID == GL_INVALID_VALUE || mAspectRatio < 0.1)
 	{
 		return;
 	}
@@ -119,4 +118,33 @@ unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
 	}
 
 	return output;
+}
+
+
+void lol()
+{
+	const std::string vertexShader(R"SHADER(
+attribute vec4 a_position;
+attribute vec2 a_texture_position;
+varying vec2 v_texture_position;
+uniform mat4 u_matrix;
+uniform mat4 u_texture_matrix;
+void main()
+{
+  v_texture_position = (u_texture_matrix * vec4(a_texture_position, 0.0, 1.0)).xy;
+  gl_Position = u_matrix * a_position;
+}
+)SHADER");
+
+	const std::string pixelShader(R"SHADER(
+precision mediump float;
+varying vec2 v_texture_position;
+uniform sampler2D u_texture_unit;
+void main()
+{
+  gl_FragColor = texture2D(u_texture_unit, v_texture_position);
+}
+)SHADER");
+
+	OpenGLES::CompileProgram(vertexShader, pixelShader);
 }

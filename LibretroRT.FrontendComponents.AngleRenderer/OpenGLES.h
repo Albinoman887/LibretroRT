@@ -14,6 +14,8 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		EGLSurface CreateSurface(SwapChainPanel^ panel, const Size* renderSurfaceSize, const float* renderResolutionScale);
 		void GetSurfaceDimensions(const EGLSurface surface, EGLint *width, EGLint *height);
 		void DestroySurface(const EGLSurface surface);
+		static GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource);
+
 		void MakeCurrent(const EGLSurface surface);
 		EGLBoolean SwapBuffers(const EGLSurface surface);
 		void Reset();
@@ -27,6 +29,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 		void Initialize();
 		void Cleanup();
+		static GLuint CompileShader(GLenum type, const std::string &source);
 
 		EGLDisplay mEglDisplay;
 		EGLContext mEglContext;
