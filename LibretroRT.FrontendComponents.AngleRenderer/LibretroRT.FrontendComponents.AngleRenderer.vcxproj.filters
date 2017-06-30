@@ -11,12 +11,14 @@
     <ClCompile Include="OpenGLES.cpp" />
     <ClCompile Include="AngleRenderer.cpp" />
     <ClCompile Include="CoreRenderTargetManager.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="AngleRenderer.h" />
     <ClInclude Include="CoreRenderTargetManager.h" />
+    <ClInclude Include="MathHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
