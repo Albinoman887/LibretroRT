@@ -26,7 +26,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 		GLuint mTextureID;
 		GLuint mVertexPositionBufferID;
-		GLuint mVertexTexPositionBufferID;
+		GLuint mVertexTexturePositionBufferID;
 		GLuint mIndexBufferID;
 		GLuint mProgramID;
 

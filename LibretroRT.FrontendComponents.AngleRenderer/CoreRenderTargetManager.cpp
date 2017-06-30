@@ -16,9 +16,13 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 	mPixelFormatBPP(0),
 	mTextureID(GL_NONE),
 	mVertexPositionBufferID(GL_NONE),
-	mVertexTexPositionBufferID(GL_NONE),
+	mVertexTexturePositionBufferID(GL_NONE),
 	mIndexBufferID(GL_NONE),
-	mProgramID(GL_NONE)
+	mProgramID(GL_NONE),
+	mPositionAttribLocation(GL_NONE),
+	mTexturePositionAttribLocation(GL_NONE),
+	mMatrixUniformLocation(GL_NONE),
+	mTextureMatrixUniformLocation(GL_NONE)
 {
 	static const std::string vertexShader(R"SHADER(
 attribute vec4 a_position;
@@ -62,8 +66,8 @@ void main()
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &mVertexTexPositionBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexPositionBufferID);
+	glGenBuffers(1, &mVertexTexturePositionBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexturePositionBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
 	short indices[] =
@@ -94,10 +98,10 @@ CoreRenderTargetManager::~CoreRenderTargetManager()
 		mVertexPositionBufferID = GL_NONE;
 	}
 
-	if (mVertexTexPositionBufferID != GL_NONE)
+	if (mVertexTexturePositionBufferID != GL_NONE)
 	{
-		glDeleteBuffers(1, &mVertexTexPositionBufferID);
-		mVertexTexPositionBufferID = GL_NONE;
+		glDeleteBuffers(1, &mVertexTexturePositionBufferID);
+		mVertexTexturePositionBufferID = GL_NONE;
 	}
 
 	if (mIndexBufferID != GL_NONE)
@@ -146,10 +150,36 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 {
 	critical_section::scoped_lock lock(mCriticalSection);
-	if (mTextureID == GL_INVALID_VALUE || mAspectRatio < 0.1)
+	if (mTextureID == GL_INVALID_VALUE || mProgramID == GL_NONE || mAspectRatio < 0.1)
 	{
 		return;
 	}
+
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(mProgramID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
+	glEnableVertexAttribArray(mPositionAttribLocation);
+	glVertexAttribPointer(mPositionAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexturePositionBufferID);
+	glEnableVertexAttribArray(mTexturePositionAttribLocation);
+	glVertexAttribPointer(mTexturePositionAttribLocation, 3, GL_FLOAT, GL_TRUE, 0, 0);
+
+	MathHelper::Matrix4 modelMatrix = MathHelper::SimpleModelMatrix((float)mDrawCount / 50.0f);
+	glUniformMatrix4fv(mModelUniformLocation, 1, GL_FALSE, &(modelMatrix.m[0][0]));
+
+	MathHelper::Matrix4 viewMatrix = MathHelper::SimpleViewMatrix();
+	glUniformMatrix4fv(mViewUniformLocation, 1, GL_FALSE, &(viewMatrix.m[0][0]));
+
+	MathHelper::Matrix4 projectionMatrix = MathHelper::SimpleProjectionMatrix(float(mWindowWidth) / float(mWindowHeight));
+	glUniformMatrix4fv(mProjUniformLocation, 1, GL_FALSE, &(projectionMatrix.m[0][0]));
+
+	// Draw 36 indices: six faces, two triangles per face, 3 indices per triangle
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);
+	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_SHORT, 0);
 }
 
 void CoreRenderTargetManager::DeleteTexture()
