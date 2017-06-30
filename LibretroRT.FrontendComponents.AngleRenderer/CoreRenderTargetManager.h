@@ -30,6 +30,11 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		GLuint mIndexBufferID;
 		GLuint mProgramID;
 
+		GLint mPositionAttribLocation;
+		GLint mTexturePositionAttribLocation;
+		GLint mMatrixUniformLocation;
+		GLint mTextureMatrixUniformLocation;
+
 		critical_section mCriticalSection;
 
 		void DeleteTexture();

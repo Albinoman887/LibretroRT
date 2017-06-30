@@ -45,6 +45,11 @@ void main()
 
 	mProgramID = OpenGLES::CompileProgram(vertexShader, pixelShader);
 
+	mPositionAttribLocation = glGetAttribLocation(mProgramID, "a_position");
+	mTexturePositionAttribLocation = glGetAttribLocation(mProgramID, "a_texture_position");
+	mMatrixUniformLocation = glGetUniformLocation(mProgramID, "u_matrix");
+	mTextureMatrixUniformLocation = glGetUniformLocation(mProgramID, "u_texture_matrix");
+
 	GLfloat positions[] =
 	{
 		0.0f, 0.0f, 0.0f,
