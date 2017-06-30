@@ -35,5 +35,13 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 				0.0f, 0.0f, 0.0f, 0.0f,
 				x, y, z, 1.0f);
 		}
+
+		inline static Matrix4 TransScaleMatrix(float sx, float sy, float sz, float tx, float ty, float tz)
+		{
+			return Matrix4(sx, 0.0f, 0.0f, 0.0f,
+				0.0f, sy, 0.0f, 0.0f,
+				0.0f, 0.0f, sz, 0.0f,
+				tx, ty, tz, 1.0f);
+		}
 	}
 }
