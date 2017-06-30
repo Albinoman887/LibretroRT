@@ -3,6 +3,7 @@
 using namespace LibretroRT;
 
 using namespace Concurrency;
+using namespace Platform;
 
 namespace LibretroRT_FrontendComponents_AngleRenderer
 {
@@ -17,14 +18,17 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void Render(EGLint canvasWidth, EGLint canvasHeight);
 
 	private:
-		unsigned int mTextureWidth, mTextureHeight;
+		unsigned int mTextureSize;
 		float mAspectRatio;
 		PixelFormats mPixelFormat;
+		unsigned int mPixelFormatBPP;
 
 		GLuint mTextureID;
 		critical_section mCriticalSection;
 
 		void DeleteTexture();
-		static void ConvertPixelFormat(PixelFormats libretroFormat);
+		static GLint ConvertPixelFormat(PixelFormats libretroFormat);
+		unsigned int ConvertPixelFormatToBPP(PixelFormats libretroFormat);
+		static unsigned int GetClosestPowerOfTwo(unsigned int value);
 	};
 }
