@@ -18,6 +18,7 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 	mVertexTexturePositionBufferID(GL_NONE),
 	mIndexBufferID(GL_NONE),
 	mProgramID(GL_NONE),
+	mTextureMatrix(Matrix4::Identity()),
 	mPositionAttribLocation(GL_NONE),
 	mTexturePositionAttribLocation(GL_NONE),
 	mMatrixUniformLocation(GL_NONE),
@@ -141,6 +142,9 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 		return;
 	}
 
+	float textureSize = mTextureSize;
+	mTextureMatrix = Matrix4::ScaleMatrix((float)width / textureSize, (float)height / textureSize, 1.0f);
+
 	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, frameBuffer->Data);
@@ -172,10 +176,9 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 	glUniformMatrix4fv(mModelUniformLocation, 1, GL_FALSE, &(modelMatrix.m[0][0]));
 
 	MathHelper::Matrix4 viewMatrix = MathHelper::SimpleViewMatrix();
-	glUniformMatrix4fv(mViewUniformLocation, 1, GL_FALSE, &(viewMatrix.m[0][0]));
+	glUniformMatrix4fv(mViewUniformLocation, 1, GL_FALSE, &(viewMatrix.m[0][0]));*/
 
-	MathHelper::Matrix4 projectionMatrix = MathHelper::SimpleProjectionMatrix(float(mWindowWidth) / float(mWindowHeight));
-	glUniformMatrix4fv(mProjUniformLocation, 1, GL_FALSE, &(projectionMatrix.m[0][0]));*/
+	glUniformMatrix4fv(mTextureMatrixUniformLocation, 1, GL_FALSE, &(mTextureMatrix.m[0][0]));
 
 	// Draw 36 indices: six faces, two triangles per face, 3 indices per triangle
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);

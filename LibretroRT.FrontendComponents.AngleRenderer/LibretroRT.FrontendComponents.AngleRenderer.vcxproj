@@ -208,14 +208,14 @@
   <ItemGroup>
     <ClInclude Include="AngleRenderer.h" />
     <ClInclude Include="CoreRenderTargetManager.h" />
-    <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Matrix4.h" />
     <ClInclude Include="OpenGLES.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AngleRenderer.cpp" />
     <ClCompile Include="CoreRenderTargetManager.cpp" />
-    <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="OpenGLES.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

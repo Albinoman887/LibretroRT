@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Matrix4.h"
+
 using namespace LibretroRT;
 
 using namespace Concurrency;
@@ -28,6 +30,8 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		GLuint mVertexTexturePositionBufferID;
 		GLuint mIndexBufferID;
 		GLuint mProgramID;
+
+		Matrix4 mTextureMatrix;
 
 		GLint mPositionAttribLocation;
 		GLint mTexturePositionAttribLocation;
