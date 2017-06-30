@@ -7,19 +7,99 @@ using namespace LibretroRT_FrontendComponents_AngleRenderer;
 using namespace Concurrency;
 using namespace Platform;
 
+const unsigned int CoreRenderTargetManager::MinTextureSize = 512;
+
 CoreRenderTargetManager::CoreRenderTargetManager() :
 	mTextureSize(MinTextureSize),
 	mAspectRatio(0.0f),
 	mPixelFormat(PixelFormats::FormatUknown),
 	mPixelFormatBPP(0),
-	mTextureID(GL_NONE)
+	mTextureID(GL_NONE),
+	mVertexPositionBufferID(GL_NONE),
+	mVertexTexPositionBufferID(GL_NONE),
+	mIndexBufferID(GL_NONE),
+	mProgramID(GL_NONE)
 {
+	static const std::string vertexShader(R"SHADER(
+attribute vec4 a_position;
+attribute vec2 a_texture_position;
+varying vec2 v_texture_position;
+uniform mat4 u_matrix;
+uniform mat4 u_texture_matrix;
+void main()
+{
+  v_texture_position = (u_texture_matrix * vec4(a_texture_position, 0.0, 1.0)).xy;
+  gl_Position = u_matrix * a_position;
+}
+)SHADER");
+
+	static const std::string pixelShader(R"SHADER(
+precision mediump float;
+varying vec2 v_texture_position;
+uniform sampler2D u_texture_unit;
+void main()
+{
+  gl_FragColor = texture2D(u_texture_unit, v_texture_position);
+}
+)SHADER");
+
+	mProgramID = OpenGLES::CompileProgram(vertexShader, pixelShader);
+
+	GLfloat positions[] =
+	{
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
+	};
+
+	glGenBuffers(1, &mVertexPositionBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &mVertexTexPositionBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexPositionBufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	short indices[] =
+	{
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	glGenBuffers(1, &mIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
 CoreRenderTargetManager::~CoreRenderTargetManager()
 {
 	critical_section::scoped_lock lock(mCriticalSection);
 	DeleteTexture();
+
+	if (mProgramID != GL_NONE)
+	{
+		glDeleteProgram(mProgramID);
+		mProgramID = GL_NONE;
+	}
+
+	if (mVertexPositionBufferID != GL_NONE)
+	{
+		glDeleteBuffers(1, &mVertexPositionBufferID);
+		mVertexPositionBufferID = GL_NONE;
+	}
+
+	if (mVertexTexPositionBufferID != GL_NONE)
+	{
+		glDeleteBuffers(1, &mVertexTexPositionBufferID);
+		mVertexTexPositionBufferID = GL_NONE;
+	}
+
+	if (mIndexBufferID != GL_NONE)
+	{
+		glDeleteBuffers(1, &mIndexBufferID);
+		mIndexBufferID = GL_NONE;
+	}
 }
 
 void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat)
@@ -118,33 +198,4 @@ unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
 	}
 
 	return output;
-}
-
-
-void lol()
-{
-	const std::string vertexShader(R"SHADER(
-attribute vec4 a_position;
-attribute vec2 a_texture_position;
-varying vec2 v_texture_position;
-uniform mat4 u_matrix;
-uniform mat4 u_texture_matrix;
-void main()
-{
-  v_texture_position = (u_texture_matrix * vec4(a_texture_position, 0.0, 1.0)).xy;
-  gl_Position = u_matrix * a_position;
-}
-)SHADER");
-
-	const std::string pixelShader(R"SHADER(
-precision mediump float;
-varying vec2 v_texture_position;
-uniform sampler2D u_texture_unit;
-void main()
-{
-  gl_FragColor = texture2D(u_texture_unit, v_texture_position);
-}
-)SHADER");
-
-	OpenGLES::CompileProgram(vertexShader, pixelShader);
 }

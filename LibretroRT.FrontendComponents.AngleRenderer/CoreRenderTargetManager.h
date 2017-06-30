@@ -18,13 +18,18 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void Render(EGLint canvasWidth, EGLint canvasHeight);
 
 	private:
-		const unsigned int MinTextureSize = 512;
+		static const unsigned int MinTextureSize = 512;
 		unsigned int mTextureSize;
 		float mAspectRatio;
 		PixelFormats mPixelFormat;
 		unsigned int mPixelFormatBPP;
 
 		GLuint mTextureID;
+		GLuint mVertexPositionBufferID;
+		GLuint mVertexTexPositionBufferID;
+		GLuint mIndexBufferID;
+		GLuint mProgramID;
+
 		critical_section mCriticalSection;
 
 		void DeleteTexture();
