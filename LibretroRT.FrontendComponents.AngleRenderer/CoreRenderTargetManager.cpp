@@ -4,10 +4,11 @@
 
 using namespace LibretroRT_FrontendComponents_AngleRenderer;
 
+using namespace Concurrency;
 using namespace Platform;
 
 CoreRenderTargetManager::CoreRenderTargetManager() :
-	mTextureSize(512),
+	mTextureSize(MinTextureSize),
 	mAspectRatio(0.0f),
 	mPixelFormat(PixelFormats::FormatUknown),
 	mPixelFormatBPP(0),
@@ -18,18 +19,20 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 
 CoreRenderTargetManager::~CoreRenderTargetManager()
 {
+	critical_section::scoped_lock lock(mCriticalSection);
 	DeleteTexture();
 }
 
 void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat)
 {
-	auto requestedSize = max(geometry->MaxWidth, geometry->MaxHeight);
+	auto requestedSize = max(MinTextureSize, max(geometry->MaxWidth, geometry->MaxHeight));
 	requestedSize = GetClosestPowerOfTwo(requestedSize);
 	if (requestedSize < mTextureSize && pixelFormat == mPixelFormat)
 	{
 		return;
 	}
 
+	critical_section::scoped_lock lock(mCriticalSection);
 	DeleteTexture();
 
 	mTextureSize = requestedSize;
@@ -45,6 +48,7 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 
 void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
 {
+	critical_section::scoped_lock lock(mCriticalSection);
 	if (mTextureID == GL_INVALID_VALUE)
 	{
 		return;
@@ -53,6 +57,15 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 	width = pitch / mPixelFormatBPP;
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, frameBuffer->Data);
+}
+
+void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
+{
+	critical_section::scoped_lock lock(mCriticalSection);
+	if (mTextureID == GL_INVALID_VALUE)
+	{
+		return;
+	}
 }
 
 void CoreRenderTargetManager::DeleteTexture()

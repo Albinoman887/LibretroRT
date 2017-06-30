@@ -18,6 +18,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void Render(EGLint canvasWidth, EGLint canvasHeight);
 
 	private:
+		const unsigned int MinTextureSize = 512;
 		unsigned int mTextureSize;
 		float mAspectRatio;
 		PixelFormats mPixelFormat;
