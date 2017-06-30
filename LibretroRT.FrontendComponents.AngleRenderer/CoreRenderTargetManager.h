@@ -43,5 +43,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void DeleteTexture();
 		static GLint ConvertPixelFormat(PixelFormats libretroFormat);
 		static unsigned int GetClosestPowerOfTwo(unsigned int value);
+		static Matrix4 ComputeFittingMatrix(float viewportAspectRatio, float aspectRatio);
 	};
 }

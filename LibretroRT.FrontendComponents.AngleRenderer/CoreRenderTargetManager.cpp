@@ -56,19 +56,27 @@ void main()
 
 	GLfloat positions[] =
 	{
-		0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		1.0f, -1.0f, 0.0f
 	};
 
 	glGenBuffers(1, &mVertexPositionBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
+	GLfloat texturePositions[] =
+	{
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
+	};
+
 	glGenBuffers(1, &mVertexTexturePositionBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexturePositionBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texturePositions), texturePositions, GL_STATIC_DRAW);
 
 	short indices[] =
 	{
@@ -113,6 +121,7 @@ CoreRenderTargetManager::~CoreRenderTargetManager()
 
 void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat)
 {
+	mAspectRatio = geometry->AspectRatio;
 	auto requestedSize = max(MinTextureSize, max(geometry->MaxWidth, geometry->MaxHeight));
 	requestedSize = GetClosestPowerOfTwo(requestedSize);
 	if (requestedSize < mTextureSize && pixelFormat == mPixelFormat)
@@ -172,15 +181,10 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 	glEnableVertexAttribArray(mTexturePositionAttribLocation);
 	glVertexAttribPointer(mTexturePositionAttribLocation, 3, GL_FLOAT, GL_TRUE, 0, 0);
 
-	/*MathHelper::Matrix4 modelMatrix = MathHelper::SimpleModelMatrix((float)mDrawCount / 50.0f);
-	glUniformMatrix4fv(mModelUniformLocation, 1, GL_FALSE, &(modelMatrix.m[0][0]));
-
-	MathHelper::Matrix4 viewMatrix = MathHelper::SimpleViewMatrix();
-	glUniformMatrix4fv(mViewUniformLocation, 1, GL_FALSE, &(viewMatrix.m[0][0]));*/
-
+	Matrix4& fittingMatrix = ComputeFittingMatrix(canvasWidth / canvasHeight, mAspectRatio);
+	glUniformMatrix4fv(mMatrixUniformLocation, 1, GL_FALSE, &(fittingMatrix.m[0][0]));
 	glUniformMatrix4fv(mTextureMatrixUniformLocation, 1, GL_FALSE, &(mTextureMatrix.m[0][0]));
 
-	// Draw 36 indices: six faces, two triangles per face, 3 indices per triangle
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);
 	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_SHORT, 0);
 }
@@ -221,4 +225,9 @@ unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
 	}
 
 	return output;
+}
+
+Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(float viewportAspectRatio, float aspectRatio)
+{
+	return Matrix4::Identity();
 }
