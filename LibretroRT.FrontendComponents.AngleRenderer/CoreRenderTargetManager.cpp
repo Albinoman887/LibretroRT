@@ -51,6 +51,7 @@ void main()
 	mTexturePositionAttribLocation = glGetAttribLocation(mProgramID, "a_texture_position");
 	mMatrixUniformLocation = glGetUniformLocation(mProgramID, "u_matrix");
 	mTextureMatrixUniformLocation = glGetUniformLocation(mProgramID, "u_texture_matrix");
+	mTextureUnitUniformlocation = glGetUniformLocation(mProgramID, "u_texture_unit");
 
 	GLfloat positions[] =
 	{
@@ -133,6 +134,7 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 	mTextureSize = requestedSize;
 	auto glPixelFormat = ConvertPixelFormat(pixelFormat);
 	glGenTextures(1, &mTextureID);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -153,6 +155,7 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 	mTextureMatrix = Matrix4::ScaleMatrix((float)width / textureSize, (float)height / textureSize, 1.0f);
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, frameBuffer->Data);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
@@ -170,6 +173,10 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(mProgramID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mTextureID);
+	glUniform1i(mTextureUnitUniformlocation, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
 	glEnableVertexAttribArray(mPositionAttribLocation);

@@ -37,6 +37,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		GLint mTexturePositionAttribLocation;
 		GLint mMatrixUniformLocation;
 		GLint mTextureMatrixUniformLocation;
+		GLint mTextureUnitUniformlocation;
 
 		critical_section mCriticalSection;
 
