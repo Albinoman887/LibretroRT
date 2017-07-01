@@ -40,28 +40,17 @@ IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGam
 {
 	return create_async([=]
 	{
-		auto output = create_task(UnloadGameAsync()).then([=]
+		create_task(UnloadGameAsync()).wait();
+
+		mCoordinator->Core = core;
+		if (!core->LoadGame(mainGameFilePath))
 		{
-			while (mRenderTargetManager == nullptr)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			}
+			return false;
+		}
 
-			critical_section::scoped_lock lock(mCoordinatorCriticalSection);
-
-			mCoordinator->Core = core;
-			if (!core->LoadGame(mainGameFilePath))
-			{
-				return false;
-			}
-
-			GameID = mainGameFilePath;
-			mRenderTargetManager->SetFormat(core->Geometry, core->PixelFormat);
-			StartRendering();
-			return true;
-		});
-
-		return output;
+		GameID = mainGameFilePath;
+		StartRendering();
+		return true;
 	});
 }
 
@@ -69,7 +58,7 @@ IAsyncAction^ AngleRenderer::UnloadGameAsync()
 {
 	return create_async([=]
 	{
-		critical_section::scoped_lock lock(mCoordinatorCriticalSection);
+		StopRendering();
 		GameID = nullptr;
 
 		auto core = mCoordinator->Core;
@@ -144,7 +133,10 @@ void AngleRenderer::GeometryChanged(GameGeometry^ geometry)
 	auto core = mCoordinator->Core;
 	if (!core) { return; }
 
-	mRenderTargetManager->SetFormat(geometry, core->PixelFormat);
+	if (mRenderTargetManager)
+	{
+		mRenderTargetManager->SetFormat(geometry, core->PixelFormat);
+	}
 }
 
 void AngleRenderer::PixelFormatChanged(PixelFormats format)
@@ -152,12 +144,18 @@ void AngleRenderer::PixelFormatChanged(PixelFormats format)
 	auto core = mCoordinator->Core;
 	if (!core) { return; }
 
-	mRenderTargetManager->SetFormat(core->Geometry, format);
+	if (mRenderTargetManager)
+	{
+		mRenderTargetManager->SetFormat(core->Geometry, format);
+	}
 }
 
 void AngleRenderer::RenderVideoFrame(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
 {
-	mRenderTargetManager->UpdateFromCoreOutput(frameBuffer, width, height, pitch);
+	if (mRenderTargetManager)
+	{
+		mRenderTargetManager->UpdateFromCoreOutput(frameBuffer, width, height, pitch);
+	}
 }
 
 void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -201,14 +199,10 @@ void AngleRenderer::CreateRenderSurface()
 	// float customResolutionScale = 0.5f;
 	// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, nullptr, &customResolutionScale);
 	//
-
-	mRenderTargetManager = std::make_unique<CoreRenderTargetManager>();
 }
 
 void AngleRenderer::DestroyRenderSurface()
 {
-	mRenderTargetManager.reset(nullptr);
-
 	mOpenGLES.DestroySurface(mRenderSurface);
 	mRenderSurface = EGL_NO_SURFACE;
 }
@@ -242,6 +236,10 @@ void AngleRenderer::StartRendering()
 
 		mOpenGLES.MakeCurrent(mRenderSurface);
 
+		mRenderTargetManager = std::make_unique<CoreRenderTargetManager>();
+		auto core = mCoordinator->Core;
+		mRenderTargetManager->SetFormat(core->Geometry, core->PixelFormat);
+
 		while (action->Status == AsyncStatus::Started)
 		{
 			EGLint panelWidth = 0;
@@ -264,6 +262,8 @@ void AngleRenderer::StartRendering()
 				return;
 			}
 		}
+
+		mRenderTargetManager.reset();
 	});
 
 	// Run task on a dedicated high priority background thread.
