@@ -200,7 +200,7 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 	glEnableVertexAttribArray(mTexturePositionAttribLocation);
 	glVertexAttribPointer(mTexturePositionAttribLocation, 2, GL_FLOAT, GL_TRUE, 0, 0);
 
-	Matrix4& fittingMatrix = ComputeFittingMatrix(canvasWidth / canvasHeight, mAspectRatio);
+	Matrix4& fittingMatrix = ComputeFittingMatrix(canvasWidth, canvasHeight, mAspectRatio);
 	glUniformMatrix4fv(mMatrixUniformLocation, 1, GL_FALSE, &(fittingMatrix.m[0][0]));
 	glUniformMatrix4fv(mTextureMatrixUniformLocation, 1, GL_FALSE, &(mTextureMatrix.m[0][0]));
 
@@ -254,7 +254,25 @@ unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
 	return output;
 }
 
-Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(float viewportAspectRatio, float aspectRatio)
+Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio)
 {
-	return Matrix4::Identity();
+	float canvasAspectRatio = (float)canvasWidth / (float)canvasHeight;
+
+	float xScale, yScale, xTrans, yTrans;
+	if (canvasAspectRatio > aspectRatio)
+	{
+		xScale = aspectRatio / canvasAspectRatio;
+		xTrans = 1.0f;
+		yScale = 1.0f;
+		yTrans = 0.0f;
+	}
+	else
+	{
+		xScale = 1.0f;
+		xTrans = 0.0f;
+		yScale = aspectRatio / canvasAspectRatio;
+		yTrans = (canvasHeight - canvasHeight*yScale) / (canvasHeight * 2.0f);
+	}
+
+	return Matrix4::TransScaleMatrix(xScale, yScale, 1.0f, xTrans, yTrans, 0.0f);
 }

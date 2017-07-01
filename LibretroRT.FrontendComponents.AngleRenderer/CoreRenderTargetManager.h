@@ -45,6 +45,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void DeleteTexture();
 		static bool GenerateTextureParametersForPixelFormat(PixelFormats libretroFormat, GLenum* textureFormat, GLenum* textureDataType, GLuint* BPP);
 		static unsigned int GetClosestPowerOfTwo(unsigned int value);
-		static Matrix4 ComputeFittingMatrix(float viewportAspectRatio, float aspectRatio);
+		static Matrix4 ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio);
 	};
 }
