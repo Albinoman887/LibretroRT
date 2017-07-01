@@ -27,6 +27,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		PixelFormats mPixelFormat;
 
 		GLuint mTextureID;
+		std::vector<unsigned char> mTextureBuffer;
 		GLuint mVertexPositionBufferID;
 		GLuint mVertexTexturePositionBufferID;
 		GLuint mIndexBufferID;
