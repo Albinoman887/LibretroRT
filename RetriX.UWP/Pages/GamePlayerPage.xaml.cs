@@ -1,5 +1,5 @@
 ﻿using LibretroRT.FrontendComponents.Common;
-using LibretroRT.FrontendComponents.Win2DRenderer;
+using LibretroRT_FrontendComponents_AngleRenderer;
 using Microsoft.Practices.ServiceLocation;
 using RetriX.Shared.ViewModels;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +17,7 @@ namespace RetriX.UWP.Pages
         public GamePlayerVM VM => ServiceLocator.Current.GetInstance<GamePlayerVM>();
         public ICoreRunner CoreRunner => Runner;
 
-        private Win2DRenderer Runner;
+        private AngleRenderer Runner;
 
         public GamePlayerPage()
         {
@@ -26,7 +26,7 @@ namespace RetriX.UWP.Pages
             var locator = ServiceLocator.Current;
             var audioPlayer = locator.GetInstance<IAudioPlayer>();
             var inputManager = locator.GetInstance<IInputManager>();
-            Runner = new Win2DRenderer(PlayerPanel, audioPlayer, inputManager);
+            Runner = new AngleRenderer(PlayerPanel, audioPlayer, inputManager);
 
             Unloaded += OnUnloading;
         }
@@ -47,9 +47,6 @@ namespace RetriX.UWP.Pages
         {
             Runner.Dispose();
             Runner = null;
-
-            PlayerPanel.RemoveFromVisualTree();
-            PlayerPanel = null;
         }
     }
 }

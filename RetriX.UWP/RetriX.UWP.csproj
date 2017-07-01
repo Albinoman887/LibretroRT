@@ -286,6 +286,10 @@
       <Project>{82569d80-5620-4012-8314-26bfecb7c9d8}</Project>
       <Name>GPGXRT</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LibretroRT.FrontendComponents.AngleRenderer\LibretroRT.FrontendComponents.AngleRenderer.vcxproj">
+      <Project>{7910df7b-01fa-45b1-bac5-1c18ae8c39ff}</Project>
+      <Name>LibretroRT.FrontendComponents.AngleRenderer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibretroRT.FrontendComponents.AudioGraphPlayer\LibretroRT.FrontendComponents.AudioGraphPlayer.csproj">
       <Project>{80dda0d6-5181-49d1-9cb6-4a441e743086}</Project>
       <Name>LibretroRT.FrontendComponents.AudioGraphPlayer</Name>
@@ -297,10 +301,6 @@
     <ProjectReference Include="..\LibretroRT.FrontendComponents.InputManager\LibretroRT.FrontendComponents.InputManager.csproj">
       <Project>{0555a467-b1b2-4301-901c-0489f63b8ecc}</Project>
       <Name>LibretroRT.FrontendComponents.InputManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LibretroRT.FrontendComponents.Win2DRenderer\LibretroRT.FrontendComponents.Win2DRenderer.csproj">
-      <Project>{cc7fb684-776f-4902-be3b-d354933ef2dc}</Project>
-      <Name>LibretroRT.FrontendComponents.Win2DRenderer</Name>
     </ProjectReference>
     <ProjectReference Include="..\LibretroRT\LibretroRT.vcxproj">
       <Project>{458b4cb3-2af3-4f93-9397-67598fd764ee}</Project>

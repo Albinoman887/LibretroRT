@@ -201,7 +201,7 @@ void AngleRenderer::CreateRenderSurface()
 	// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, nullptr, &customResolutionScale);
 	//
 
-	mRenderTargetManager = std::make_unique<CoreRenderTargetManager>(CoreRenderTargetManager());
+	mRenderTargetManager = std::make_unique<CoreRenderTargetManager>();
 }
 
 void AngleRenderer::DestroyRenderSurface()
