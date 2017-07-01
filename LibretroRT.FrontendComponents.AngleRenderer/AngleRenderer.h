@@ -72,7 +72,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		IAsyncAction^ mRenderLoopWorker;
 		critical_section mRenderSurfaceCriticalSection;
 
-		CoreRenderTargetManager mRenderTargetManager;
+		std::unique_ptr<CoreRenderTargetManager> mRenderTargetManager;
 
 		void CreateRenderSurface();
 		void DestroyRenderSurface();

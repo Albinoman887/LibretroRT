@@ -39,12 +39,10 @@ IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGam
 {
 	return create_async([=]
 	{
-		/*while (!RenderPanelInitialized)
+		while (mRenderTargetManager == nullptr)
 		{
-		//Ensure core doesn't try rendering before Win2D is ready.
-		//Some games load faster than the Win2D canvas is initialized
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-		}*/
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
 
 		auto output = create_task(UnloadGameAsync()).then([=]
 		{
@@ -57,7 +55,7 @@ IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGam
 			}
 
 			GameID = mainGameFilePath;
-			//RenderTargetManager.CurrentCorePixelFormat = core.PixelFormat;
+			mRenderTargetManager->SetFormat(core->Geometry, core->PixelFormat);
 			StartRendering();
 			return true;
 		});
@@ -127,27 +125,6 @@ IAsyncOperation<bool>^ AngleRenderer::SaveGameStateAsync(WriteOnlyArray<byte>^ s
 	});
 }
 
-void AngleRenderer::GeometryChanged(GameGeometry^ geometry)
-{
-	auto core = mCoordinator->Core;
-	if (!core) { return; }
-
-	mRenderTargetManager.SetFormat(geometry, core->PixelFormat);
-}
-
-void AngleRenderer::PixelFormatChanged(PixelFormats format)
-{
-	auto core = mCoordinator->Core;
-	if (!core) { return; }
-
-	mRenderTargetManager.SetFormat(core->Geometry, format);
-}
-
-void AngleRenderer::RenderVideoFrame(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
-{
-	mRenderTargetManager.UpdateFromCoreOutput(frameBuffer, width, height, pitch);
-}
-
 IAsyncOperation<bool>^ AngleRenderer::LoadGameStateAsync(const Array<byte>^ stateData)
 {
 	return create_async([=]
@@ -159,6 +136,27 @@ IAsyncOperation<bool>^ AngleRenderer::LoadGameStateAsync(const Array<byte>^ stat
 
 		return core->Unserialize(stateData);
 	});
+}
+
+void AngleRenderer::GeometryChanged(GameGeometry^ geometry)
+{
+	auto core = mCoordinator->Core;
+	if (!core) { return; }
+
+	mRenderTargetManager->SetFormat(geometry, core->PixelFormat);
+}
+
+void AngleRenderer::PixelFormatChanged(PixelFormats format)
+{
+	auto core = mCoordinator->Core;
+	if (!core) { return; }
+
+	mRenderTargetManager->SetFormat(core->Geometry, format);
+}
+
+void AngleRenderer::RenderVideoFrame(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
+{
+	mRenderTargetManager->UpdateFromCoreOutput(frameBuffer, width, height, pitch);
 }
 
 void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -181,29 +179,35 @@ void AngleRenderer::OnPageLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 
 void AngleRenderer::CreateRenderSurface()
 {
-	if (mRenderSurface == EGL_NO_SURFACE)
+	if (mRenderSurface != EGL_NO_SURFACE)
 	{
-		// The app can configure the the SwapChainPanel which may boost performance.
-		// By default, this template uses the default configuration.
-		mRenderSurface = mOpenGLES.CreateSurface(mSwapChainPanel, nullptr, nullptr);
-
-		// You can configure the SwapChainPanel to render at a lower resolution and be scaled up to
-		// the swapchain panel size. This scaling is often free on mobile hardware.
-		//
-		// One way to configure the SwapChainPanel is to specify precisely which resolution it should render at.
-		// Size customRenderSurfaceSize = Size(800, 600);
-		// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, &customRenderSurfaceSize, nullptr);
-		//
-		// Another way is to tell the SwapChainPanel to render at a certain scale factor compared to its size.
-		// e.g. if the SwapChainPanel is 1920x1280 then setting a factor of 0.5f will make the app render at 960x640
-		// float customResolutionScale = 0.5f;
-		// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, nullptr, &customResolutionScale);
-		// 
+		return;
 	}
+
+	// The app can configure the the SwapChainPanel which may boost performance.
+	// By default, this template uses the default configuration.
+	mRenderSurface = mOpenGLES.CreateSurface(mSwapChainPanel, nullptr, nullptr);
+
+	// You can configure the SwapChainPanel to render at a lower resolution and be scaled up to
+	// the swapchain panel size. This scaling is often free on mobile hardware.
+	//
+	// One way to configure the SwapChainPanel is to specify precisely which resolution it should render at.
+	// Size customRenderSurfaceSize = Size(800, 600);
+	// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, &customRenderSurfaceSize, nullptr);
+	//
+	// Another way is to tell the SwapChainPanel to render at a certain scale factor compared to its size.
+	// e.g. if the SwapChainPanel is 1920x1280 then setting a factor of 0.5f will make the app render at 960x640
+	// float customResolutionScale = 0.5f;
+	// mRenderSurface = mOpenGLES->CreateSurface(swapChainPanel, nullptr, &customResolutionScale);
+	//
+
+	mRenderTargetManager = std::make_unique<CoreRenderTargetManager>(CoreRenderTargetManager());
 }
 
 void AngleRenderer::DestroyRenderSurface()
 {
+	mRenderTargetManager.reset(nullptr);
+
 	mOpenGLES.DestroySurface(mRenderSurface);
 	mRenderSurface = EGL_NO_SURFACE;
 }
@@ -244,7 +248,7 @@ void AngleRenderer::StartRendering()
 			mOpenGLES.GetSurfaceDimensions(mRenderSurface, &panelWidth, &panelHeight);
 
 			RunFrameCoreLogic();
-			mRenderTargetManager.Render(panelWidth, panelHeight);
+			mRenderTargetManager->Render(panelWidth, panelHeight);
 			
 			// The call to eglSwapBuffers might not be successful (i.e. due to Device Lost)
 			// If the call fails, then we must reinitialize EGL and the GL resources.
