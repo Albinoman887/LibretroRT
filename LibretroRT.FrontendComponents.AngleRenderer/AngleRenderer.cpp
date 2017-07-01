@@ -22,7 +22,7 @@ AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audio
 
 	//CoreWindow^ window = Window::Current->CoreWindow;
 	//auto token = window->VisibilityChanged += ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &AngleRenderer::OnVisibilityChanged);
-	mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleRenderer::OnPageLoaded);
+	mOnPageLoadedRegistrationToken = mSwapChainPanel->Loaded += ref new RoutedEventHandler(this, &AngleRenderer::OnPageLoaded);
 }
 
 AngleRenderer::~AngleRenderer()
@@ -33,19 +33,20 @@ AngleRenderer::~AngleRenderer()
 	if (core) { core->UnloadGame(); }
 
 	DestroyRenderSurface();
+	mSwapChainPanel->Loaded -= mOnPageLoadedRegistrationToken;
 }
 
 IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGameFilePath)
 {
 	return create_async([=]
 	{
-		while (mRenderTargetManager == nullptr)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-
 		auto output = create_task(UnloadGameAsync()).then([=]
 		{
+			while (mRenderTargetManager == nullptr)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+
 			critical_section::scoped_lock lock(mCoordinatorCriticalSection);
 
 			mCoordinator->Core = core;

@@ -24,8 +24,7 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 	mMatrixUniformLocation(GL_NONE),
 	mTextureMatrixUniformLocation(GL_NONE)
 {
-	static const std::string vertexShader(R"SHADER(
-attribute vec4 a_position;
+	static const std::string vertexShader(R"SHADER(attribute vec4 a_position;
 attribute vec2 a_texture_position;
 varying vec2 v_texture_position;
 uniform mat4 u_matrix;
@@ -37,8 +36,7 @@ void main()
 }
 )SHADER");
 
-	static const std::string pixelShader(R"SHADER(
-precision mediump float;
+	static const std::string pixelShader(R"SHADER(precision mediump float;
 varying vec2 v_texture_position;
 uniform sampler2D u_texture_unit;
 void main()

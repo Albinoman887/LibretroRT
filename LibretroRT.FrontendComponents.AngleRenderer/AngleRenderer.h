@@ -68,6 +68,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 
 		OpenGLES& mOpenGLES;
 		SwapChainPanel^ mSwapChainPanel;
+		EventRegistrationToken mOnPageLoadedRegistrationToken;
 		EGLSurface mRenderSurface;
 		IAsyncAction^ mRenderLoopWorker;
 		critical_section mRenderSurfaceCriticalSection;
