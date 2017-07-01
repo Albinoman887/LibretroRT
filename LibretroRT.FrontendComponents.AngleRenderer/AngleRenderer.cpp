@@ -27,13 +27,14 @@ AngleRenderer::AngleRenderer(SwapChainPanel^ swapChainPanel, IAudioPlayer^ audio
 
 AngleRenderer::~AngleRenderer()
 {
+	mSwapChainPanel->Loaded -= mOnPageLoadedRegistrationToken;
+
 	StopRendering();
 
 	auto core = mCoordinator->Core;
 	if (core) { core->UnloadGame(); }
 
 	DestroyRenderSurface();
-	mSwapChainPanel->Loaded -= mOnPageLoadedRegistrationToken;
 }
 
 IAsyncOperation<bool>^ AngleRenderer::LoadGameAsync(ICore^ core, String^ mainGameFilePath)
