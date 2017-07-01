@@ -135,7 +135,7 @@ void AngleRenderer::GeometryChanged(GameGeometry^ geometry)
 
 	if (mRenderTargetManager)
 	{
-		mRenderTargetManager->SetFormat(geometry, core->PixelFormat);
+		mRenderTargetManager->SetSize(geometry);
 	}
 }
 
@@ -146,7 +146,7 @@ void AngleRenderer::PixelFormatChanged(PixelFormats format)
 
 	if (mRenderTargetManager)
 	{
-		mRenderTargetManager->SetFormat(core->Geometry, format);
+		mRenderTargetManager->SetPixelFormat(format);
 	}
 }
 
@@ -238,7 +238,8 @@ void AngleRenderer::StartRendering()
 
 		mRenderTargetManager = std::make_unique<CoreRenderTargetManager>();
 		auto core = mCoordinator->Core;
-		mRenderTargetManager->SetFormat(core->Geometry, core->PixelFormat);
+		mRenderTargetManager->SetSize(core->Geometry);
+		mRenderTargetManager->SetPixelFormat(core->PixelFormat);
 
 		while (action->Status == AsyncStatus::Started)
 		{

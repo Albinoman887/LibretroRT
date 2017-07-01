@@ -118,12 +118,12 @@ CoreRenderTargetManager::~CoreRenderTargetManager()
 	}
 }
 
-void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat)
+void CoreRenderTargetManager::SetSize(GameGeometry^ geometry)
 {
 	mAspectRatio = geometry->AspectRatio;
 	auto requestedSize = max(MinTextureSize, max(geometry->MaxWidth, geometry->MaxHeight));
 	requestedSize = GetClosestPowerOfTwo(requestedSize);
-	if (requestedSize < mTextureSize && pixelFormat == mPixelFormat)
+	if (requestedSize < mTextureSize)
 	{
 		return;
 	}
@@ -132,7 +132,6 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 	DeleteTexture();
 
 	mTextureSize = requestedSize;
-	auto glPixelFormat = ConvertPixelFormat(pixelFormat);
 	glGenTextures(1, &mTextureID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
@@ -140,7 +139,12 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, glPixelFormat, mTextureSize, mTextureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mTextureSize, mTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+}
+
+void CoreRenderTargetManager::SetPixelFormat(PixelFormats pixelFormat)
+{
+	mPixelFormat = pixelFormat;
 }
 
 void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
@@ -204,21 +208,6 @@ void CoreRenderTargetManager::DeleteTexture()
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glDeleteTextures(1, &mTextureID);
 	mTextureID = GL_NONE;
-}
-
-GLint CoreRenderTargetManager::ConvertPixelFormat(PixelFormats libretroFormat)
-{
-	switch (libretroFormat)
-	{
-	case LibretroRT::PixelFormats::Format0RGB1555:
-		return GL_RGB5_A1;
-	case LibretroRT::PixelFormats::FormatXRGB8888:
-		return GL_RGBA;
-	case LibretroRT::PixelFormats::FormatRGB565:
-		return GL_RGB565;
-	}
-
-	return GL_INVALID_VALUE;
 }
 
 unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
