@@ -130,9 +130,9 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 
 	critical_section::scoped_lock lock(mCriticalSection);
 	DeleteTexture();
-
 	mTextureSize = requestedSize;
-	auto glPixelFormat = ConvertPixelFormat(pixelFormat);
+	mPixelFormat = pixelFormat;
+
 	glGenTextures(1, &mTextureID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
@@ -140,7 +140,16 @@ void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pix
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, glPixelFormat, mTextureSize, mTextureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+	GLenum textureFormat, textureDataType;
+	GLuint bytesPerPixel;
+	auto converted = GenerateTextureParametersForPixelFormat(mPixelFormat, &textureFormat, &textureDataType, &bytesPerPixel);
+	if (!converted)
+	{
+		throw ref new FailureException(L"Pixel format conversion failed");
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, mTextureSize, mTextureSize, 0, textureFormat, textureDataType, nullptr);
 }
 
 void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch)
@@ -154,10 +163,15 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 	float textureSize = mTextureSize;
 	mTextureMatrix = Matrix4::ScaleMatrix((float)width / textureSize, (float)height / textureSize, 1.0f);
 
-	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch);
+	GLenum textureFormat, textureDataType;
+	GLuint bytesPerPixel;
+	auto converted = GenerateTextureParametersForPixelFormat(mPixelFormat, &textureFormat, &textureDataType, &bytesPerPixel);
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch / bytesPerPixel);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, frameBuffer->Data);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, textureFormat, textureDataType, frameBuffer->Data);
+	auto lol = glGetError();
 	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
 }
 
@@ -206,19 +220,27 @@ void CoreRenderTargetManager::DeleteTexture()
 	mTextureID = GL_NONE;
 }
 
-GLint CoreRenderTargetManager::ConvertPixelFormat(PixelFormats libretroFormat)
+bool CoreRenderTargetManager::GenerateTextureParametersForPixelFormat(PixelFormats libretroFormat, GLenum* textureFormat, GLenum* textureDataType, GLuint* BPP)
 {
+	*textureFormat = GL_INVALID_VALUE;
+	*textureDataType = GL_INVALID_VALUE;
+	*BPP = 0;
+
 	switch (libretroFormat)
 	{
-	case LibretroRT::PixelFormats::Format0RGB1555:
-		return GL_RGB5_A1;
 	case LibretroRT::PixelFormats::FormatXRGB8888:
-		return GL_RGBA;
+		*textureFormat = GL_RGBA;
+		*textureDataType = GL_UNSIGNED_BYTE;
+		*BPP = 4;
+		return true;
 	case LibretroRT::PixelFormats::FormatRGB565:
-		return GL_RGB565;
+		*textureFormat = GL_RGB;
+		*textureDataType = GL_UNSIGNED_SHORT_5_6_5;
+		*BPP = 2;
+		return true;
 	}
 
-	return GL_INVALID_VALUE;
+	return false;
 }
 
 unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
