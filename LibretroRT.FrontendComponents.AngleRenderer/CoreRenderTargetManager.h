@@ -15,8 +15,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		CoreRenderTargetManager();
 		~CoreRenderTargetManager();
 
-		void SetSize(GameGeometry^ geometry);
-		void SetPixelFormat(PixelFormats pixelFormat);
+		void SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat);
 		void UpdateFromCoreOutput(const Array<byte>^ frameBuffer, unsigned int width, unsigned int height, unsigned int pitch);
 		void Render(EGLint canvasWidth, EGLint canvasHeight);
 
@@ -44,6 +43,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		critical_section mCriticalSection;
 
 		void DeleteTexture();
+		static GLint ConvertPixelFormat(PixelFormats libretroFormat);
 		static unsigned int GetClosestPowerOfTwo(unsigned int value);
 		static Matrix4 ComputeFittingMatrix(float viewportAspectRatio, float aspectRatio);
 	};
