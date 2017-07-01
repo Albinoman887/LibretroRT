@@ -56,10 +56,10 @@ void main()
 
 	GLfloat positions[] =
 	{
-		-1.0f, -1.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f
+		-1.0f, -1.0f, 0.0f, 1.0f,
+		-1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, -1.0f, 0.0f, 1.0f
 	};
 
 	glGenBuffers(1, &mVertexPositionBufferID);
@@ -68,10 +68,10 @@ void main()
 
 	GLfloat texturePositions[] =
 	{
-		0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		0.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f
 	};
 
 	glGenBuffers(1, &mVertexTexturePositionBufferID);
@@ -175,11 +175,11 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexPositionBufferID);
 	glEnableVertexAttribArray(mPositionAttribLocation);
-	glVertexAttribPointer(mPositionAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(mPositionAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexTexturePositionBufferID);
 	glEnableVertexAttribArray(mTexturePositionAttribLocation);
-	glVertexAttribPointer(mTexturePositionAttribLocation, 3, GL_FLOAT, GL_TRUE, 0, 0);
+	glVertexAttribPointer(mTexturePositionAttribLocation, 2, GL_FLOAT, GL_TRUE, 0, 0);
 
 	Matrix4& fittingMatrix = ComputeFittingMatrix(canvasWidth / canvasHeight, mAspectRatio);
 	glUniformMatrix4fv(mMatrixUniformLocation, 1, GL_FALSE, &(fittingMatrix.m[0][0]));
