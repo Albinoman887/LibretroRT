@@ -22,3 +22,6 @@
 #include <EGL/eglplatform.h>
 
 #include <angle_windowsstore.h>
+
+#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>

@@ -18,7 +18,6 @@ CoreRenderTargetManager::CoreRenderTargetManager() :
 	mVertexTexturePositionBufferID(GL_NONE),
 	mIndexBufferID(GL_NONE),
 	mProgramID(GL_NONE),
-	mTextureMatrix(Matrix4::Identity()),
 	mPositionAttribLocation(GL_NONE),
 	mTexturePositionAttribLocation(GL_NONE),
 	mMatrixUniformLocation(GL_NONE),
@@ -121,7 +120,7 @@ CoreRenderTargetManager::~CoreRenderTargetManager()
 void CoreRenderTargetManager::SetFormat(GameGeometry^ geometry, PixelFormats pixelFormat)
 {
 	mAspectRatio = geometry->AspectRatio;
-	auto requestedSize = max(MinTextureSize, max(geometry->MaxWidth, geometry->MaxHeight));
+	auto requestedSize = glm::max(MinTextureSize, glm::max(geometry->MaxWidth, geometry->MaxHeight));
 	requestedSize = GetClosestPowerOfTwo(requestedSize);
 	if (requestedSize < mTextureSize && pixelFormat == mPixelFormat)
 	{
@@ -161,7 +160,7 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 	}
 
 	float textureSize = mTextureSize;
-	mTextureMatrix = Matrix4::ScaleMatrix((float)width / textureSize, (float)height / textureSize, 1.0f);
+	mTextureMatrix = glm::scale(glm::mat4(), glm::vec3((float)width / textureSize, (float)height / textureSize, 1.0f));
 
 	GLenum textureFormat, textureDataType;
 	GLuint bytesPerPixel;
@@ -171,7 +170,6 @@ void CoreRenderTargetManager::UpdateFromCoreOutput(const Array<byte>^ frameBuffe
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, textureFormat, textureDataType, frameBuffer->Data);
-	auto lol = glGetError();
 	glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
 }
 
@@ -200,9 +198,9 @@ void CoreRenderTargetManager::Render(EGLint canvasWidth, EGLint canvasHeight)
 	glEnableVertexAttribArray(mTexturePositionAttribLocation);
 	glVertexAttribPointer(mTexturePositionAttribLocation, 2, GL_FLOAT, GL_TRUE, 0, 0);
 
-	Matrix4& fittingMatrix = ComputeFittingMatrix(canvasWidth, canvasHeight, mAspectRatio);
-	glUniformMatrix4fv(mMatrixUniformLocation, 1, GL_FALSE, &(fittingMatrix.m[0][0]));
-	glUniformMatrix4fv(mTextureMatrixUniformLocation, 1, GL_FALSE, &(mTextureMatrix.m[0][0]));
+	glm::mat4 fittingMatrix = ComputeFittingMatrix(canvasWidth, canvasHeight, mAspectRatio);
+	glUniformMatrix4fv(mMatrixUniformLocation, 1, GL_FALSE, &fittingMatrix[0][0]);
+	glUniformMatrix4fv(mTextureMatrixUniformLocation, 1, GL_FALSE, &mTextureMatrix[0][0]);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBufferID);
 	glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_SHORT, 0);
@@ -254,7 +252,7 @@ unsigned int CoreRenderTargetManager::GetClosestPowerOfTwo(unsigned int value)
 	return output;
 }
 
-Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio)
+glm::mat4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio)
 {
 	float canvasAspectRatio = (float)canvasWidth / (float)canvasHeight;
 
@@ -262,7 +260,7 @@ Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int canva
 	if (canvasAspectRatio > aspectRatio)
 	{
 		xScale = aspectRatio / canvasAspectRatio;
-		xTrans = 1.0f;
+		xTrans = 1.0f - xScale;
 		yScale = 1.0f;
 		yTrans = 0.0f;
 	}
@@ -271,8 +269,11 @@ Matrix4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int canva
 		xScale = 1.0f;
 		xTrans = 0.0f;
 		yScale = aspectRatio / canvasAspectRatio;
-		yTrans = (canvasHeight - canvasHeight*yScale) / (canvasHeight * 2.0f);
+		yTrans = 1.0f - yScale;
 	}
 
-	return Matrix4::TransScaleMatrix(xScale, yScale, 1.0f, xTrans, yTrans, 0.0f);
+	glm::mat4 output;
+	output = glm::scale(output, glm::vec3(xScale, yScale, 1.0f));
+	output = glm::translate(output, glm::vec3(xTrans, yTrans, 0.0f));
+	return output;
 }

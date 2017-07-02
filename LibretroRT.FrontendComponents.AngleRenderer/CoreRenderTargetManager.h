@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Matrix4.h"
-
 using namespace LibretroRT;
 
 using namespace Concurrency;
@@ -32,7 +30,7 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		GLuint mIndexBufferID;
 		GLuint mProgramID;
 
-		Matrix4 mTextureMatrix;
+		glm::mat4 mTextureMatrix;
 
 		GLint mPositionAttribLocation;
 		GLint mTexturePositionAttribLocation;
@@ -45,6 +43,6 @@ namespace LibretroRT_FrontendComponents_AngleRenderer
 		void DeleteTexture();
 		static bool GenerateTextureParametersForPixelFormat(PixelFormats libretroFormat, GLenum* textureFormat, GLenum* textureDataType, GLuint* BPP);
 		static unsigned int GetClosestPowerOfTwo(unsigned int value);
-		static Matrix4 ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio);
+		static glm::mat4 ComputeFittingMatrix(int canvasWidth, int canvasHeight, float aspectRatio);
 	};
 }

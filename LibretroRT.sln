@@ -49,7 +49,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibretroRT.FrontendComponen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetriX.UWP", "RetriX.UWP\RetriX.UWP.csproj", "{17975A5B-67F5-494F-937D-9132AC78BD35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetriX.Shared", "RetriX.Shared\RetriX.Shared.csproj", "{58B82D57-A956-4492-96FB-3E82FA82798A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetriX.Shared", "RetriX.Shared\RetriX.Shared.csproj", "{58B82D57-A956-4492-96FB-3E82FA82798A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibretroRT_Tools", "LibretroRT_Tools\LibretroRT_Tools.vcxproj", "{E64ED7DA-F5BC-413B-A80D-A95111894139}"
 EndProject
