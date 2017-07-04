@@ -256,24 +256,19 @@ glm::mat4 CoreRenderTargetManager::ComputeFittingMatrix(int canvasWidth, int can
 {
 	float canvasAspectRatio = (float)canvasWidth / (float)canvasHeight;
 
-	float xScale, yScale, xTrans, yTrans;
+	float xScale, yScale;
 	if (canvasAspectRatio > aspectRatio)
 	{
 		xScale = aspectRatio / canvasAspectRatio;
-		xTrans = 1.0f - xScale;
 		yScale = 1.0f;
-		yTrans = 0.0f;
 	}
 	else
 	{
 		xScale = 1.0f;
-		xTrans = 0.0f;
-		yScale = aspectRatio / canvasAspectRatio;
-		yTrans = 1.0f - yScale;
+		yScale = canvasAspectRatio / aspectRatio;
 	}
 
 	glm::mat4 output;
 	output = glm::scale(output, glm::vec3(xScale, yScale, 1.0f));
-	output = glm::translate(output, glm::vec3(xTrans, yTrans, 0.0f));
 	return output;
 }
