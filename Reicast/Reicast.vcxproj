@@ -346,6 +346,7 @@
     <ClCompile Include="src\core\libretro-common\file\retro_stat.c" />
     <ClCompile Include="src\core\libretro-common\memmap\memalign.c" />
     <ClCompile Include="src\core\libretro-common\rthreads\rthreads.c" />
+    <ClCompile Include="src\core\libretro\common.cpp" />
     <ClCompile Include="src\core\libretro\libretro.cpp" />
     <ClCompile Include="src\core\nullDC.cpp" />
     <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />

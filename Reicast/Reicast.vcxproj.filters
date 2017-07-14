@@ -161,5 +161,6 @@
     <ClCompile Include="src\core\libretro-common\file\retro_stat.c" />
     <ClCompile Include="src\core\libretro-common\memmap\memalign.c" />
     <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />
+    <ClCompile Include="src\core\libretro\common.cpp" />
   </ItemGroup>
 </Project>
