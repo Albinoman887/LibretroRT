@@ -125,6 +125,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +137,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +149,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +161,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,6 +173,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,6 +185,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,7 +194,166 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\deps\chdpsr\cdipsr.h" />
+    <ClInclude Include="src\core\deps\chdr\chd.h" />
+    <ClInclude Include="src\core\deps\chdr\coretypes.h" />
+    <ClInclude Include="src\core\deps\coreio\coreio.h" />
+    <ClInclude Include="src\core\deps\crypto\md5.h" />
+    <ClInclude Include="src\core\deps\crypto\sha1.h" />
+    <ClInclude Include="src\core\deps\crypto\sha256.h" />
+    <ClInclude Include="src\core\deps\libelf\debug.h" />
+    <ClInclude Include="src\core\deps\libelf\elf.h" />
+    <ClInclude Include="src\core\deps\libelf\elf32.h" />
+    <ClInclude Include="src\core\deps\libelf\elf64.h" />
+    <ClInclude Include="src\core\deps\zlib\crc32.h" />
+    <ClInclude Include="src\core\deps\zlib\deflate.h" />
+    <ClInclude Include="src\core\deps\zlib\gzguts.h" />
+    <ClInclude Include="src\core\deps\zlib\inffast.h" />
+    <ClInclude Include="src\core\deps\zlib\inffixed.h" />
+    <ClInclude Include="src\core\deps\zlib\inflate.h" />
+    <ClInclude Include="src\core\deps\zlib\inftrees.h" />
+    <ClInclude Include="src\core\deps\zlib\trees.h" />
+    <ClInclude Include="src\core\deps\zlib\zconf.h" />
+    <ClInclude Include="src\core\deps\zlib\zlib.h" />
+    <ClInclude Include="src\core\deps\zlib\zutil.h" />
+    <ClInclude Include="src\core\hw\aica\aica.h" />
+    <ClInclude Include="src\core\hw\aica\dsp.h" />
+    <ClInclude Include="src\core\hw\arm7\arm7.h" />
+    <ClInclude Include="src\core\hw\gdrom\gdromv3.h" />
+    <ClInclude Include="src\core\hw\gdrom\gdrom_if.h" />
+    <ClInclude Include="src\core\hw\holly\holly.h" />
+    <ClInclude Include="src\core\hw\maple\maple_cfg.h" />
+    <ClInclude Include="src\core\hw\maple\maple_devs.h" />
+    <ClInclude Include="src\core\hw\maple\maple_helper.h" />
+    <ClInclude Include="src\core\hw\maple\maple_if.h" />
+    <ClInclude Include="src\core\hw\mem\_vmem.h" />
+    <ClInclude Include="src\core\hw\naomi\naomi.h" />
+    <ClInclude Include="src\core\hw\naomi\naomi_cart.h" />
+    <ClInclude Include="src\core\hw\naomi\naomi_regs.h" />
+    <ClInclude Include="src\core\hw\pvr\helper_classes.h" />
+    <ClInclude Include="src\core\hw\pvr\pixel_convert.h" />
+    <ClInclude Include="src\core\hw\pvr\pvr.h" />
+    <ClInclude Include="src\core\hw\pvr\pvr_types.h" />
+    <ClInclude Include="src\core\hw\pvr\ta.h" />
+    <ClInclude Include="src\core\hw\pvr\tr.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\ccn.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\dmac.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\mmu.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\mmu_impl.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\modules.h" />
+    <ClInclude Include="src\core\hw\sh4\modules\tmu.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_core.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_if.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_interpreter.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_interrupts.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_mem.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_mmr.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_opcode_list.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_rom.h" />
+    <ClInclude Include="src\core\hw\sh4\sh4_sched.h" />
+    <ClInclude Include="src\core\imgread\common.h" />
+    <ClInclude Include="src\core\imgread\gd_driver.h" />
+    <ClInclude Include="src\core\imgread\ImgReader.h" />
+    <ClInclude Include="src\core\libretro-common\include\boolean.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsm\glsm.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsm\glsmsym.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\glsym.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\glsym_es2.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\glsym_es3.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\glsym_gl.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\rglgen.h" />
+    <ClInclude Include="src\core\libretro-common\include\glsym\rglgen_headers.h" />
+    <ClInclude Include="src\core\libretro-common\include\memalign.h" />
+    <ClInclude Include="src\core\libretro-common\include\retro_common.h" />
+    <ClInclude Include="src\core\libretro-common\include\retro_common_api.h" />
+    <ClInclude Include="src\core\libretro-common\include\retro_inline.h" />
+    <ClInclude Include="src\core\libretro-common\include\retro_miscellaneous.h" />
+    <ClInclude Include="src\core\libretro-common\include\retro_stat.h" />
+    <ClInclude Include="src\core\libretro-common\include\rthreads\rthreads.h" />
+    <ClInclude Include="src\core\libretro\libretro.h" />
+    <ClInclude Include="src\core\libretro\typedefs.h" />
+    <ClInclude Include="src\core\reios\descrambl.h" />
+    <ClInclude Include="src\core\reios\gdrom_hle.h" />
+    <ClInclude Include="src\core\reios\reios.h" />
+    <ClInclude Include="src\core\reios\reios_elf.h" />
+    <ClInclude Include="src\core\stdclass.h" />
     <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\deps\chdpsr\cdipsr.cpp" />
+    <ClCompile Include="src\core\deps\chdr\chdr.cpp" />
+    <ClCompile Include="src\core\deps\coreio\coreio.cpp" />
+    <ClCompile Include="src\core\deps\crypto\md5.cpp" />
+    <ClCompile Include="src\core\deps\crypto\sha1.cpp" />
+    <ClCompile Include="src\core\deps\crypto\sha256.cpp" />
+    <ClCompile Include="src\core\deps\libelf\elf.cpp" />
+    <ClCompile Include="src\core\deps\libelf\elf32.cpp" />
+    <ClCompile Include="src\core\deps\libelf\elf64.cpp" />
+    <ClCompile Include="src\core\deps\zlib\adler32.c" />
+    <ClCompile Include="src\core\deps\zlib\compress.c" />
+    <ClCompile Include="src\core\deps\zlib\crc32.c" />
+    <ClCompile Include="src\core\deps\zlib\deflate.c" />
+    <ClCompile Include="src\core\deps\zlib\gzclose.c" />
+    <ClCompile Include="src\core\deps\zlib\gzlib.c" />
+    <ClCompile Include="src\core\deps\zlib\gzread.c" />
+    <ClCompile Include="src\core\deps\zlib\gzwrite.c" />
+    <ClCompile Include="src\core\deps\zlib\infback.c" />
+    <ClCompile Include="src\core\deps\zlib\inffast.c" />
+    <ClCompile Include="src\core\deps\zlib\inflate.c" />
+    <ClCompile Include="src\core\deps\zlib\inftrees.c" />
+    <ClCompile Include="src\core\deps\zlib\trees.c" />
+    <ClCompile Include="src\core\deps\zlib\uncompr.c" />
+    <ClCompile Include="src\core\deps\zlib\zutil.c" />
+    <ClCompile Include="src\core\hw\aica\aica.cpp" />
+    <ClCompile Include="src\core\hw\aica\dsp.cpp" />
+    <ClCompile Include="src\core\hw\arm7\arm7.cpp" />
+    <ClCompile Include="src\core\hw\gdrom\gdromv3.cpp" />
+    <ClCompile Include="src\core\hw\gdrom\gdrom_response.cpp" />
+    <ClCompile Include="src\core\hw\holly\holly.cpp" />
+    <ClCompile Include="src\core\hw\maple\maple_cfg.cpp" />
+    <ClCompile Include="src\core\hw\maple\maple_devs.cpp" />
+    <ClCompile Include="src\core\hw\maple\maple_helper.cpp" />
+    <ClCompile Include="src\core\hw\maple\maple_if.cpp" />
+    <ClCompile Include="src\core\hw\mem\_vmem.cpp" />
+    <ClCompile Include="src\core\hw\naomi\naomi.cpp" />
+    <ClCompile Include="src\core\hw\naomi\naomi_cart.cpp" />
+    <ClCompile Include="src\core\hw\pvr\pvr.cpp" />
+    <ClCompile Include="src\core\hw\pvr\ta.cpp" />
+    <ClCompile Include="src\core\hw\pvr\tr.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\bsc.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\ccn.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\cpg.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\dmac.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\intc.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\mmu.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\rtc.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\serial.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\tmu.cpp" />
+    <ClCompile Include="src\core\hw\sh4\modules\ubc.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_core_regs.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_interrupts.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_mem.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_mmr.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_opcode_list.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_rom.cpp" />
+    <ClCompile Include="src\core\hw\sh4\sh4_sched.cpp" />
+    <ClCompile Include="src\core\imgread\cdi.cpp" />
+    <ClCompile Include="src\core\imgread\chd.cpp" />
+    <ClCompile Include="src\core\imgread\common.cpp" />
+    <ClCompile Include="src\core\imgread\gdi.cpp" />
+    <ClCompile Include="src\core\imgread\ImgReader.cpp" />
+    <ClCompile Include="src\core\libretro-common\file\retro_stat.c" />
+    <ClCompile Include="src\core\libretro-common\memmap\memalign.c" />
+    <ClCompile Include="src\core\libretro-common\rthreads\rthreads.c" />
+    <ClCompile Include="src\core\libretro\common.cpp" />
+    <ClCompile Include="src\core\libretro\libretro.cpp" />
+    <ClCompile Include="src\core\nullDC.cpp" />
+    <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />
+    <ClCompile Include="src\core\reios\descrambl.cpp" />
+    <ClCompile Include="src\core\reios\gdrom_hle.cpp" />
+    <ClCompile Include="src\core\reios\reios.cpp" />
+    <ClCompile Include="src\core\reios\reios_elf.cpp" />
+    <ClCompile Include="src\core\stdclass.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
