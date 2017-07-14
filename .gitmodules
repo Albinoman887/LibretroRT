@@ -30,3 +30,7 @@
 	path = Yabause/src
 	url = https://github.com/Aftnet/yabause.git
 	branch = master
+[submodule "Reicast/src"]
+	path = Reicast/src
+	url = https://github.com/libretro/reicast-emulator.git
+	branch = master
