@@ -32,5 +32,5 @@
 	branch = master
 [submodule "Reicast/src"]
 	path = Reicast/src
-	url = https://github.com/libretro/reicast-emulator.git
+	url = https://github.com/Aftnet/reicast-emulator.git
 	branch = master

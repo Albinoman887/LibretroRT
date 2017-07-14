@@ -59,9 +59,6 @@
     <ClInclude Include="src\core\deps\libelf\elf.h" />
     <ClInclude Include="src\core\deps\libelf\debug.h" />
     <ClInclude Include="src\core\deps\chdpsr\cdipsr.h" />
-    <ClInclude Include="src\core\hw\naomi\naomi.h" />
-    <ClInclude Include="src\core\hw\naomi\naomi_cart.h" />
-    <ClInclude Include="src\core\hw\naomi\naomi_regs.h" />
     <ClInclude Include="src\core\deps\zlib\crc32.h" />
     <ClInclude Include="src\core\deps\zlib\deflate.h" />
     <ClInclude Include="src\core\deps\zlib\gzguts.h" />
@@ -144,8 +141,6 @@
     <ClCompile Include="src\core\deps\libelf\elf64.cpp" />
     <ClCompile Include="src\core\deps\libelf\elf.cpp" />
     <ClCompile Include="src\core\deps\chdpsr\cdipsr.cpp" />
-    <ClCompile Include="src\core\hw\naomi\naomi.cpp" />
-    <ClCompile Include="src\core\hw\naomi\naomi_cart.cpp" />
     <ClCompile Include="src\core\deps\zlib\adler32.c" />
     <ClCompile Include="src\core\deps\zlib\compress.c" />
     <ClCompile Include="src\core\deps\zlib\crc32.c" />
@@ -163,7 +158,6 @@
     <ClCompile Include="src\core\deps\zlib\zutil.c" />
     <ClCompile Include="src\core\libretro-common\rthreads\rthreads.c" />
     <ClCompile Include="src\core\libretro\libretro.cpp" />
-    <ClCompile Include="src\core\libretro\common.cpp" />
     <ClCompile Include="src\core\libretro-common\file\retro_stat.c" />
     <ClCompile Include="src\core\libretro-common\memmap\memalign.c" />
     <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />
