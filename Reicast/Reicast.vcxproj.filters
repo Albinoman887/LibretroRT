@@ -88,6 +88,14 @@
     <ClInclude Include="src\core\libretro-common\include\retro_stat.h" />
     <ClInclude Include="src\core\libretro\libretro.h" />
     <ClInclude Include="src\core\libretro\typedefs.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\blockmanager.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\decoder.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\decoder_opcodes.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\ngen.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\rec_config.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\regalloc.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\shil.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\shil_canonical.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\hw\arm7\arm7.cpp" />
@@ -162,5 +170,10 @@
     <ClCompile Include="src\core\libretro-common\memmap\memalign.c" />
     <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />
     <ClCompile Include="src\core\libretro\common.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\blockmanager.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\decoder.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\driver.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\shil.cpp" />
+    <ClCompile Include="src\core\rec.cpp" />
   </ItemGroup>
 </Project>

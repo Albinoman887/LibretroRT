@@ -126,7 +126,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +139,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +152,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,7 +165,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,7 +191,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\core;$(ProjectDir)src\core\deps;$(ProjectDir)src\core\libretro;$(ProjectDir)src\core\libretro-common;$(ProjectDir)src\core\libretro-common\include;$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;RELEASE;NDEBUG;TARGET_NO_JIT;TARGET_NO_AREC;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LIBRETRO__;TARGET_NO_THREADS;TARGET_NO_NVMEM;TARGET_NO_JIT;TARGET_NO_AREC;RELEASE;NDEBUG;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,6 +239,14 @@
     <ClInclude Include="src\core\hw\pvr\pvr_types.h" />
     <ClInclude Include="src\core\hw\pvr\ta.h" />
     <ClInclude Include="src\core\hw\pvr\tr.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\blockmanager.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\decoder.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\decoder_opcodes.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\ngen.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\rec_config.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\regalloc.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\shil.h" />
+    <ClInclude Include="src\core\hw\sh4\dyna\shil_canonical.h" />
     <ClInclude Include="src\core\hw\sh4\modules\ccn.h" />
     <ClInclude Include="src\core\hw\sh4\modules\dmac.h" />
     <ClInclude Include="src\core\hw\sh4\modules\mmu.h" />
@@ -321,6 +329,10 @@
     <ClCompile Include="src\core\hw\pvr\pvr.cpp" />
     <ClCompile Include="src\core\hw\pvr\ta.cpp" />
     <ClCompile Include="src\core\hw\pvr\tr.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\blockmanager.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\decoder.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\driver.cpp" />
+    <ClCompile Include="src\core\hw\sh4\dyna\shil.cpp" />
     <ClCompile Include="src\core\hw\sh4\modules\bsc.cpp" />
     <ClCompile Include="src\core\hw\sh4\modules\ccn.cpp" />
     <ClCompile Include="src\core\hw\sh4\modules\cpg.cpp" />
@@ -350,6 +362,7 @@
     <ClCompile Include="src\core\libretro\libretro.cpp" />
     <ClCompile Include="src\core\nullDC.cpp" />
     <ClCompile Include="src\core\rec-cpp\rec_cpp.cpp" />
+    <ClCompile Include="src\core\rec.cpp" />
     <ClCompile Include="src\core\reios\descrambl.cpp" />
     <ClCompile Include="src\core\reios\gdrom_hle.cpp" />
     <ClCompile Include="src\core\reios\reios.cpp" />
